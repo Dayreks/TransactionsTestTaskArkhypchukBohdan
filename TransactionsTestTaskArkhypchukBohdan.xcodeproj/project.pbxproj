@@ -13,6 +13,8 @@
 		47B3037A29560722008CCFAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47B3037929560722008CCFAF /* Assets.xcassets */; };
 		47B3037D29560722008CCFAF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47B3037B29560722008CCFAF /* LaunchScreen.storyboard */; };
 		47B30386295608EE008CCFAF /* Transactions.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 47B30384295608EE008CCFAF /* Transactions.xcdatamodeld */; };
+		47B3038A29563A4C008CCFAF /* SecondScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3038929563A4C008CCFAF /* SecondScreen.swift */; };
+		47B3038D29563BB3008CCFAF /* Utils .swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3038C29563BB3008CCFAF /* Utils .swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		47B3037C29560722008CCFAF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		47B3037E29560722008CCFAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		47B30385295608EE008CCFAF /* Transactions.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Transactions.xcdatamodel; sourceTree = "<group>"; };
+		47B3038929563A4C008CCFAF /* SecondScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondScreen.swift; sourceTree = "<group>"; };
+		47B3038C29563BB3008CCFAF /* Utils .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Utils .swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,14 +61,24 @@
 		47B3036F29560721008CCFAF /* TransactionsTestTaskArkhypchukBohdan */ = {
 			isa = PBXGroup;
 			children = (
+				47B3038B29563B98008CCFAF /* ViewControllers  */,
 				47B3037029560721008CCFAF /* AppDelegate.swift */,
 				47B3037229560721008CCFAF /* SceneDelegate.swift */,
-				47B3037429560721008CCFAF /* FirstScreen.swift */,
+				47B3038C29563BB3008CCFAF /* Utils .swift */,
 				47B3037929560722008CCFAF /* Assets.xcassets */,
 				47B3037B29560722008CCFAF /* LaunchScreen.storyboard */,
 				47B3037E29560722008CCFAF /* Info.plist */,
 			);
 			path = TransactionsTestTaskArkhypchukBohdan;
+			sourceTree = "<group>";
+		};
+		47B3038B29563B98008CCFAF /* ViewControllers  */ = {
+			isa = PBXGroup;
+			children = (
+				47B3037429560721008CCFAF /* FirstScreen.swift */,
+				47B3038929563A4C008CCFAF /* SecondScreen.swift */,
+			);
+			path = "ViewControllers ";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,10 +151,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47B3038D29563BB3008CCFAF /* Utils .swift in Sources */,
 				47B3037529560721008CCFAF /* FirstScreen.swift in Sources */,
 				47B3037129560721008CCFAF /* AppDelegate.swift in Sources */,
 				47B30386295608EE008CCFAF /* Transactions.xcdatamodeld in Sources */,
 				47B3037329560721008CCFAF /* SceneDelegate.swift in Sources */,
+				47B3038A29563A4C008CCFAF /* SecondScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
