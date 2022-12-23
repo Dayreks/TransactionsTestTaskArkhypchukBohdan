@@ -9,21 +9,21 @@
 /* Begin PBXBuildFile section */
 		47B3037129560721008CCFAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3037029560721008CCFAF /* AppDelegate.swift */; };
 		47B3037329560721008CCFAF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3037229560721008CCFAF /* SceneDelegate.swift */; };
-		47B3037529560721008CCFAF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3037429560721008CCFAF /* ViewController.swift */; };
-		47B3037829560721008CCFAF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47B3037629560721008CCFAF /* Main.storyboard */; };
+		47B3037529560721008CCFAF /* FirstScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3037429560721008CCFAF /* FirstScreen.swift */; };
 		47B3037A29560722008CCFAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47B3037929560722008CCFAF /* Assets.xcassets */; };
 		47B3037D29560722008CCFAF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47B3037B29560722008CCFAF /* LaunchScreen.storyboard */; };
+		47B30386295608EE008CCFAF /* Transactions.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 47B30384295608EE008CCFAF /* Transactions.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		47B3036D29560721008CCFAF /* TransactionsTestTaskArkhypchukBohdan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TransactionsTestTaskArkhypchukBohdan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47B3037029560721008CCFAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		47B3037229560721008CCFAF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		47B3037429560721008CCFAF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		47B3037729560721008CCFAF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		47B3037429560721008CCFAF /* FirstScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstScreen.swift; sourceTree = "<group>"; };
 		47B3037929560722008CCFAF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47B3037C29560722008CCFAF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		47B3037E29560722008CCFAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		47B30385295608EE008CCFAF /* Transactions.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Transactions.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +40,7 @@
 		47B3036429560721008CCFAF = {
 			isa = PBXGroup;
 			children = (
+				47B30384295608EE008CCFAF /* Transactions.xcdatamodeld */,
 				47B3036F29560721008CCFAF /* TransactionsTestTaskArkhypchukBohdan */,
 				47B3036E29560721008CCFAF /* Products */,
 			);
@@ -58,8 +59,7 @@
 			children = (
 				47B3037029560721008CCFAF /* AppDelegate.swift */,
 				47B3037229560721008CCFAF /* SceneDelegate.swift */,
-				47B3037429560721008CCFAF /* ViewController.swift */,
-				47B3037629560721008CCFAF /* Main.storyboard */,
+				47B3037429560721008CCFAF /* FirstScreen.swift */,
 				47B3037929560722008CCFAF /* Assets.xcassets */,
 				47B3037B29560722008CCFAF /* LaunchScreen.storyboard */,
 				47B3037E29560722008CCFAF /* Info.plist */,
@@ -127,7 +127,6 @@
 			files = (
 				47B3037D29560722008CCFAF /* LaunchScreen.storyboard in Resources */,
 				47B3037A29560722008CCFAF /* Assets.xcassets in Resources */,
-				47B3037829560721008CCFAF /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,8 +137,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47B3037529560721008CCFAF /* ViewController.swift in Sources */,
+				47B3037529560721008CCFAF /* FirstScreen.swift in Sources */,
 				47B3037129560721008CCFAF /* AppDelegate.swift in Sources */,
+				47B30386295608EE008CCFAF /* Transactions.xcdatamodeld in Sources */,
 				47B3037329560721008CCFAF /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -147,14 +147,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		47B3037629560721008CCFAF /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				47B3037729560721008CCFAF /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		47B3037B29560722008CCFAF /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -292,9 +284,9 @@
 				INFOPLIST_FILE = TransactionsTestTaskArkhypchukBohdan/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -302,9 +294,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ua.edu.ukma.Arkhypchuk.TransactionsTestTaskArkhypchukBohdan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -320,9 +315,9 @@
 				INFOPLIST_FILE = TransactionsTestTaskArkhypchukBohdan/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -330,9 +325,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ua.edu.ukma.Arkhypchuk.TransactionsTestTaskArkhypchukBohdan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -358,6 +356,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		47B30384295608EE008CCFAF /* Transactions.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				47B30385295608EE008CCFAF /* Transactions.xcdatamodel */,
+			);
+			currentVersion = 47B30385295608EE008CCFAF /* Transactions.xcdatamodel */;
+			path = Transactions.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 47B3036529560721008CCFAF /* Project object */;
 }
