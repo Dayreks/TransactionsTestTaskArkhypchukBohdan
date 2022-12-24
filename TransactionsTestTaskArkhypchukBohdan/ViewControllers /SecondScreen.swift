@@ -27,6 +27,7 @@ final class SecondScreen: UIViewController {
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tap)
         
+        //Initial setup of the UI for the ViewController
         setUpAmountLabel()
         setUpAmountField()
         setUpCategoryPicker()
@@ -62,7 +63,7 @@ extension SecondScreen {
         amountField.keyboardType = .decimalPad
         
         amountField.delegate = self
-
+        
         amountField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -106,25 +107,50 @@ extension SecondScreen {
     
     
     @objc func addTransaction() {
+        
+        let balance = CoreDataService.shared.fetch(Balance.self, predicate: nil)
+        guard let currentBalance = balance.first?.amount else {return}
+        
         if let amount = self.amount {
-            CoreDataService.shared.write{
-                _ = CoreDataService.shared.create(Transaction.self) { object in
-                    object.amount = -amount
-                    object.category = self.category
-                    object.date = .init()
+            
+            //Checking whether the user can perform transaction based on their current balance
+            if (currentBalance >= amount) {
+                
+                //Creating new transaction
+                CoreDataService.shared.write{
+                    _ = CoreDataService.shared.create(Transaction.self) { object in
+                        object.amount = -amount
+                        object.category = self.category
+                        object.date = .init()
+                    }
+                    
+                    //Deducting the amount of the transaction from the balance accordingly
+                    balance.first?.amount = currentBalance - amount
+                    
                 }
+            } else {
+                
+                //If there are not enough money on the balance showing this error
+                let notEnoughMoney = UIAlertController(title: "Oops", message: "You are too poor to do this :(", preferredStyle: .alert)
+                present(notEnoughMoney, animated: true, completion:{
+                    notEnoughMoney.view.superview?.isUserInteractionEnabled = true
+                    notEnoughMoney.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissOnTapOutside)))
+                })
             }
+            
         } else {
+            
+            //If there is a wrong input showing the user that error
             let wrongFormat = UIAlertController(title: "Error", message: "The amount is either nil or in the wrong format", preferredStyle: .alert)
             present(wrongFormat, animated: true, completion:{
                 wrongFormat.view.superview?.isUserInteractionEnabled = true
                 wrongFormat.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissOnTapOutside)))
-             })
+            })
         }
     }
     
     @objc func dismissOnTapOutside(){
-       self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 }
 
@@ -140,12 +166,15 @@ extension SecondScreen: UIPickerViewDelegate, UIPickerViewDataSource {
 }
 
 extension SecondScreen: UITextFieldDelegate {
-
+    
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        guard let number = textField.text else {return false}
-        amount = Double(number)
+        if let text = textField.text, let textRange = Range(range, in: text) {
+            let updatedText = text.replacingCharacters(in: textRange, with: string)
+            amount = Double(updatedText)
+        }
         return true
+        
     }
-
+    
 }

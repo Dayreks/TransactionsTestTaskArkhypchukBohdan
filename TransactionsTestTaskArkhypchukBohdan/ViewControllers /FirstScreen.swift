@@ -12,6 +12,8 @@ final class FirstScreen: UIViewController {
     @Fetch<Transaction> var transactions
     @Fetch<Balance> var balanceAmount
     
+    var sortedTransactions : [Transaction] { transactions.sorted(by: {$0.date! > $1.date!}) }
+    
     private let balance = UILabel()
     private let rate = UILabel()
     
@@ -26,12 +28,17 @@ final class FirstScreen: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         historyTable.reloadData()
+        guard let balanceAmount = balanceAmount.first?.amount else {return}
+        balance.text = "\(balanceAmount.rounded(toPlaces: 3)) btc"
+        
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
+        // Setup of the initial balance in case it was not set already
         if CoreDataService.shared.fetch(Balance.self, predicate: nil) == [] {
             CoreDataService.shared.write {
                 _ = CoreDataService.shared.create(Balance.self) { object in
@@ -43,6 +50,8 @@ final class FirstScreen: UIViewController {
         view.backgroundColor = .systemBackground
         title = "Test Task"
         
+        
+        //Preparing all of the UI elements
         setUpBalance()
         setUpRate()
         setUpTopUp()
@@ -63,7 +72,7 @@ extension FirstScreen {
         view.addSubview(balance)
         
         guard let balanceAmount = balanceAmount.first?.amount else {return}
-        balance.text = "\(balanceAmount) btc"
+        balance.text = "\(balanceAmount.rounded(toPlaces: 3)) btc"
         balance.numberOfLines = 3
         balance.font = .systemFont(ofSize: 24)
         
@@ -88,7 +97,7 @@ extension FirstScreen {
         rate.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            rate.centerYAnchor.constraint(equalTo: balance.centerYAnchor, constant: 4),
+            rate.centerYAnchor.constraint(equalTo: balance.centerYAnchor),
             rate.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -8),
             rate.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5)
         ])
@@ -159,13 +168,13 @@ extension FirstScreen {
 extension FirstScreen: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return transactions.count
+        return sortedTransactions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "transaction.id", for: indexPath) as! TransactionCell
         cell.isUserInteractionEnabled = false
-        cell.transcation = transactions[indexPath.row]
+        cell.transcation = sortedTransactions[indexPath.row]
         cell.configure()
         return cell
     }
@@ -173,7 +182,7 @@ extension FirstScreen: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             CoreDataService.shared.write {
-                CoreDataService.shared.delete(transactions[indexPath.row])
+                CoreDataService.shared.delete(sortedTransactions[indexPath.row])
             }
             historyTable.reloadData()
         }
@@ -192,21 +201,25 @@ extension FirstScreen {
     }
     
     @objc func topUpBalance() {
+        
         let topUpAlert = UIAlertController(title: "Top Up", message: "Enter the amount in BTC", preferredStyle: .alert)
         topUpAlert.addTextField()
         topUpAlert.textFields?.first?.keyboardType = .decimalPad
         
+        let balance = CoreDataService.shared.fetch(Balance.self, predicate: nil)
+        guard let currentBalance = balance.first?.amount else {return}
+        
         topUpAlert.addAction(.init(title: "Submit", style: .default) { [weak self] _ in
-            if let amount = topUpAlert.textFields?.first?.text {
+            if let amount = topUpAlert.textFields?.first?.text, let amountValue = Double(amount) {
                 
                 CoreDataService.shared.write {
                     
-                    let balance = CoreDataService.shared.fetch(Balance.self, predicate: nil)
-                    guard let currentBalance = balance.first?.amount, let amount = Double(amount) else {return}
-                    balance.first?.amount = currentBalance + amount
+                    //Changing balance amount to the according input
+                    balance.first?.amount = currentBalance.rounded(toPlaces: 3) + amountValue.rounded(toPlaces: 3)
                     
+                    //Adding new transaction of a type "top up"
                     _ = CoreDataService.shared.create(Transaction.self) { object in
-                        object.amount = amount
+                        object.amount = amountValue
                         object.category = "top up"
                         object.date = .init()
                     }
@@ -217,9 +230,21 @@ extension FirstScreen {
                 
                 self?.historyTable.reloadData()
             }
+            else {
+                //If there is a wrong input showing the user that error
+                let wrongFormat = UIAlertController(title: "Error", message: "The amount is either nil or in the wrong format", preferredStyle: .alert)
+                self?.present(wrongFormat, animated: true, completion:{
+                    wrongFormat.view.superview?.isUserInteractionEnabled = true
+                    wrongFormat.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self?.dismissOnTapOutside)))
+                })
+            }
         })
         
         present(topUpAlert, animated: false)
+    }
+    
+    @objc func dismissOnTapOutside(){
+        self.dismiss(animated: true, completion: nil)
     }
 }
 

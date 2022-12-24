@@ -17,6 +17,7 @@ final class TransactionCell: UITableViewCell {
     private let date = UILabel()
     private let category = UILabel()
     
+    //Configuration of the cell's views
     func configure() {
         setUpAmount()
         setUpDate()
@@ -30,7 +31,7 @@ extension TransactionCell {
         contentView.addSubview(amount)
         
         guard let amountBTC = transcation?.amount else {return}
-        amount.text = "\(amountBTC) btc"
+        amount.text = "\(amountBTC.rounded(toPlaces: 3)) btc"
         amount.numberOfLines = 3
         amount.font = .systemFont(ofSize: 16)
         
@@ -47,7 +48,7 @@ extension TransactionCell {
         
        
         let formatter = DateFormatter()
-        formatter.dateFormat = "d.MM.yyyy HH:MM "
+        formatter.dateFormat = "d.MM.yyyy HH:mm "
         guard let transcationDate = transcation?.date else {return}
         let formattedDate = formatter.string(from: transcationDate)
         
