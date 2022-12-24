@@ -15,3 +15,5 @@ enum Category: String, CaseIterable {
     case restaurant
     case `other`
 }
+
+
