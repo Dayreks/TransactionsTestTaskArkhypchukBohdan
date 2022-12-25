@@ -16,6 +16,8 @@ final class FirstScreen: UIViewController {
     private var sortedTransactions : [Transaction] = []
     private var isPaginationOn = false
     
+    private var rateValue: String?
+    
     private let balance = UILabel()
     private let rate = UILabel()
     
@@ -24,6 +26,7 @@ final class FirstScreen: UIViewController {
     
     private let historyTable = UITableView()
     
+    private var lastUpdateTime: Date?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +36,9 @@ final class FirstScreen: UIViewController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(checkIfNeededToUpdate), name: UIApplication.willEnterForegroundNotification, object: nil)
+        
+        gainRateValue()
         loadMore(itemsPerPage: C.itemsPerPage, currentPage: _transactions.currentPage)
         
         // Setup of the initial balance in case it was not set already
@@ -55,7 +61,6 @@ final class FirstScreen: UIViewController {
         setUpAddTransaction()
         setUpHistoryTable()
         
-    
     }
     
     
@@ -96,7 +101,7 @@ extension FirstScreen: UITableViewDataSource, UITableViewDelegate {
 //Actions for the buttons 
 extension FirstScreen {
     
-    func loadMore(itemsPerPage: Int, currentPage: Int) {
+    private func loadMore(itemsPerPage: Int, currentPage: Int) {
         let newData = CoreDataService.shared.fetchBatch(Transaction.self, itemsPerPage: itemsPerPage, currentPage: currentPage)
         guard !newData.isEmpty else { return }
         sortedTransactions.append(contentsOf: newData)
@@ -107,7 +112,7 @@ extension FirstScreen {
         }
     }
     
-    @objc func nextScreen() {
+    @objc private func nextScreen() {
         let nextScreen = SecondScreen()
         nextScreen.delegate = self
         nextScreen.title = "New Transaction"
@@ -115,7 +120,7 @@ extension FirstScreen {
         
     }
     
-    @objc func topUpBalance() {
+    @objc private func topUpBalance() {
         
         let topUpAlert = UIAlertController(title: "Top Up", message: "Enter the amount in BTC", preferredStyle: .alert)
         topUpAlert.addTextField()
@@ -162,8 +167,27 @@ extension FirstScreen {
         
     }
     
-    @objc func dismissOnTapOutside() {
+    @objc private func dismissOnTapOutside() {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    private func gainRateValue() {
+        Task {
+            if let rateValue = await RateData().getRate(url: "https://api.coindesk.com/v1/bpi/currentprice.json") {
+                DispatchQueue.main.async { [weak self] in
+                    self?.rateValue = rateValue
+                    self?.rate.text = "1 btc = \(rateValue) $"
+                }
+            }
+        }
+        self.lastUpdateTime = .init()
+    }
+    
+    @objc private func checkIfNeededToUpdate() {
+        guard let lastUpdateTime = lastUpdateTime else {return}
+        if Date().timeIntervalSince(lastUpdateTime) >= 3600 {
+            gainRateValue()
+        }
     }
     
 }
@@ -184,7 +208,7 @@ extension FirstScreen: SecondScreenDelegate {
 //UI setUp with all the neccesary constraints and atributes
 extension FirstScreen {
     
-    func setUpBalance() {
+    private func setUpBalance() {
         view.addSubview(balance)
         
         guard let balanceAmount = balanceAmount.first?.amount else {return}
@@ -204,7 +228,7 @@ extension FirstScreen {
     }
     
     
-    func setUpTopUp() {
+    private func setUpTopUp() {
         view.addSubview(topUp)
         
         topUp.configuration = .filled()
@@ -223,10 +247,10 @@ extension FirstScreen {
         
     }
     
-    func setUpRate() {
+    private func setUpRate() {
         view.addSubview(rate)
         
-        rate.text = "1 btc = xxxxxxx.xxxxxx $"
+        
         rate.numberOfLines = C.numberOfLines
         rate.textColor = .systemGray
         rate.font = .systemFont(ofSize: C.fontSizeSub)
@@ -239,7 +263,7 @@ extension FirstScreen {
         ])
     }
     
-    func setUpAddTransaction() {
+    private func setUpAddTransaction() {
         view.addSubview(addTranscation)
         
         addTranscation.configuration = .filled()
@@ -257,7 +281,7 @@ extension FirstScreen {
         ])
     }
     
-    func setUpHistoryTable() {
+    private func setUpHistoryTable() {
         view.addSubview(historyTable)
         
         historyTable.backgroundColor = .secondarySystemBackground

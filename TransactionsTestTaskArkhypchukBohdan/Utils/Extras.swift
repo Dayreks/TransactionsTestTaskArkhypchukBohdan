@@ -16,6 +16,14 @@ enum Category: String, CaseIterable {
     case `other`
 }
 
+
+enum NetworkError: Error {
+    
+    case badHostString
+    case bad
+    
+}
+
 extension Double {
     
     func rounded(toPlaces places:Int) -> Double {
@@ -23,6 +31,7 @@ extension Double {
         return (self * divisor).rounded() / divisor
     }
 }
+
 
 
 struct C {
