@@ -46,9 +46,9 @@ struct RateData: Codable {
     
     var bpi: BPI = BPI()
 
-    func getRate(url: String) async -> String? {
+    func getRate() async -> String? {
         do {
-            let rateService = try RateService(url: url)
+            let rateService = try RateService(url: C.Strings.url)
             let data = try await rateService.perform()
             let results = try JSONDecoder().decode(RateData.self, from: data)
             

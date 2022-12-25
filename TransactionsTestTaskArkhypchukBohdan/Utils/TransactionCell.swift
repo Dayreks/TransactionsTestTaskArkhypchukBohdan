@@ -48,7 +48,7 @@ extension TransactionCell {
         
        
         let formatter = DateFormatter()
-        formatter.dateFormat = "d.MM.yyyy HH:mm "
+        formatter.dateFormat = C.Strings.dateFormat
         guard let transcationDate = transcation?.date else {return}
         let formattedDate = formatter.string(from: transcationDate)
         

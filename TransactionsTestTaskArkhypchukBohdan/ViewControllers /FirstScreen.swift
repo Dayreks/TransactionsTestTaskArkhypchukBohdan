@@ -51,7 +51,7 @@ final class FirstScreen: UIViewController {
         }
         
         view.backgroundColor = .systemBackground
-        title = "Test Task"
+        title = C.Strings.firstScreenTitle
         
         
         //Preparing all of the UI elements
@@ -78,7 +78,7 @@ extension FirstScreen: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "transaction.id", for: indexPath) as! TransactionCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: C.Strings.cellId, for: indexPath) as! TransactionCell
         cell.isUserInteractionEnabled = false
         cell.transcation = sortedTransactions[indexPath.row]
         cell.configure()
@@ -115,14 +115,14 @@ extension FirstScreen {
     @objc private func nextScreen() {
         let nextScreen = SecondScreen()
         nextScreen.delegate = self
-        nextScreen.title = "New Transaction"
+        nextScreen.title = C.Strings.secondScreenTitle
         navigationController?.pushViewController(nextScreen, animated: true)
         
     }
     
     @objc private func topUpBalance() {
         
-        let topUpAlert = UIAlertController(title: "Top Up", message: "Enter the amount in BTC", preferredStyle: .alert)
+        let topUpAlert = UIAlertController(title: "Top Up", message: C.Strings.amountOfBtcMessage, preferredStyle: .alert)
         topUpAlert.addTextField()
         topUpAlert.textFields?.first?.keyboardType = .decimalPad
         
@@ -140,7 +140,7 @@ extension FirstScreen {
                     //Adding new transaction of a type "top up"
                     _ = CoreDataService.shared.create(Transaction.self) { object in
                         object.amount = amountValue
-                        object.category = "top up"
+                        object.category = C.Strings.topUp
                         object.date = .init()
                         
                     }
@@ -154,7 +154,7 @@ extension FirstScreen {
             }
             else {
                 //If there is a wrong input showing the user that error
-                let wrongFormat = UIAlertController(title: "Error", message: "The amount is either nil or in the wrong format", preferredStyle: .alert)
+                let wrongFormat = UIAlertController(title: "Error", message: C.Strings.wrongValueMessage , preferredStyle: .alert)
                 self?.present(wrongFormat, animated: true, completion:{
                     wrongFormat.view.superview?.isUserInteractionEnabled = true
                     wrongFormat.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self?.dismissOnTapOutside)))
@@ -173,7 +173,7 @@ extension FirstScreen {
     
     private func gainRateValue() {
         Task {
-            if let rateValue = await RateData().getRate(url: "https://api.coindesk.com/v1/bpi/currentprice.json") {
+            if let rateValue = await RateData().getRate() {
                 DispatchQueue.main.async { [weak self] in
                     self?.rateValue = rateValue
                     self?.rate.text = "1 btc = \(rateValue) $"
@@ -232,7 +232,7 @@ extension FirstScreen {
         view.addSubview(topUp)
         
         topUp.configuration = .filled()
-        topUp.configuration?.title = "Top Up"
+        topUp.configuration?.title = C.ViewNames.topUp
         topUp.configuration?.baseBackgroundColor = .secondarySystemBackground
         topUp.configuration?.baseForegroundColor = .secondaryLabel
         
@@ -267,7 +267,7 @@ extension FirstScreen {
         view.addSubview(addTranscation)
         
         addTranscation.configuration = .filled()
-        addTranscation.configuration?.title = "Add Transaction"
+        addTranscation.configuration?.title = C.ViewNames.addTransaction
         addTranscation.configuration?.baseBackgroundColor = .secondarySystemBackground
         addTranscation.configuration?.baseForegroundColor = .secondaryLabel
         
@@ -287,8 +287,8 @@ extension FirstScreen {
         historyTable.backgroundColor = .secondarySystemBackground
         
         
-        historyTable.register(TransactionCell.self, forCellReuseIdentifier: "transaction.id")
-        historyTable.dequeueReusableCell(withIdentifier: "transaction.id")
+        historyTable.register(TransactionCell.self, forCellReuseIdentifier: C.Strings.cellId)
+        historyTable.dequeueReusableCell(withIdentifier: C.Strings.cellId)
         
         historyTable.delegate = self
         historyTable.dataSource = self

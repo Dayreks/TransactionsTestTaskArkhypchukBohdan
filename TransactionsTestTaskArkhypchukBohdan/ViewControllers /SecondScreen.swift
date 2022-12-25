@@ -7,9 +7,6 @@
 
 import UIKit
 
-protocol SecondScreenDelegate: AnyObject {
-    func addTransaction()
-}
 
 final class SecondScreen: UIViewController {
     
@@ -48,7 +45,7 @@ extension SecondScreen {
         
         view.addSubview(amountLabel)
         
-        amountLabel.text = "Amount"
+        amountLabel.text = C.ViewNames.amount
         amountLabel.font = .systemFont(ofSize: C.fontSizeSub)
         
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -97,7 +94,7 @@ extension SecondScreen {
         view.addSubview(addButton)
         
         addButton.configuration = .filled()
-        addButton.configuration?.title = "Add"
+        addButton.configuration?.title = C.ViewNames.add
         addButton.configuration?.baseBackgroundColor = .secondarySystemBackground
         addButton.configuration?.baseForegroundColor = .secondaryLabel
         
@@ -141,7 +138,7 @@ extension SecondScreen {
             } else {
                 
                 //If there are not enough money on the balance showing this error
-                let notEnoughMoney = UIAlertController(title: "Oops", message: "You are too poor to do this :(", preferredStyle: .alert)
+                let notEnoughMoney = UIAlertController(title: "Oops", message: C.Strings.wrongAmountMessage, preferredStyle: .alert)
                 present(notEnoughMoney, animated: true, completion:{
                     notEnoughMoney.view.superview?.isUserInteractionEnabled = true
                     notEnoughMoney.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissOnTapOutside)))
@@ -151,7 +148,7 @@ extension SecondScreen {
         } else {
             
             //If there is a wrong input showing the user that error
-            let wrongFormat = UIAlertController(title: "Error", message: "The amount is either nil or in the wrong format", preferredStyle: .alert)
+            let wrongFormat = UIAlertController(title: "Error", message: C.Strings.wrongValueMessage, preferredStyle: .alert)
             present(wrongFormat, animated: true, completion:{
                 wrongFormat.view.superview?.isUserInteractionEnabled = true
                 wrongFormat.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissOnTapOutside)))
