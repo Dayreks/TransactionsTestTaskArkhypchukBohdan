@@ -14,8 +14,7 @@ final class FirstScreen: UIViewController {
     @Fetch<Balance> var balanceAmount
     
     private var sortedTransactions : [Transaction] = []
-    private let itemsPerPage = 20
-    private var isPaginationOn = true
+    private var isPaginationOn = false
     
     private let balance = UILabel()
     private let rate = UILabel()
@@ -30,14 +29,6 @@ final class FirstScreen: UIViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        
-        historyTable.reloadData()
-        guard let balanceAmount = balanceAmount.first?.amount else {return}
-        balance.text = "\(balanceAmount.rounded(toPlaces: 3)) btc"
-        
-        loadMore(itemsPerPage: 1, currentPage: 1)
-    }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -57,13 +48,13 @@ final class FirstScreen: UIViewController {
         
         //Preparing all of the UI elements
         setUpBalance()
-        setUpRate()
         setUpTopUp()
+        setUpRate()
         setUpAddTransaction()
         setUpHistoryTable()
         
         
-        loadMore(itemsPerPage: 20, currentPage: _transactions.currentPage)
+        loadMore(itemsPerPage: C.itemsPerPage, currentPage: _transactions.currentPage)
     }
     
     
@@ -80,36 +71,21 @@ extension FirstScreen {
         view.addSubview(balance)
         
         guard let balanceAmount = balanceAmount.first?.amount else {return}
-        balance.text = "\(balanceAmount.rounded(toPlaces: 3)) btc"
-        balance.numberOfLines = 3
-        balance.font = .systemFont(ofSize: 24)
+        balance.text = "\(balanceAmount.rounded(toPlaces: C.roundDecimal)) btc"
+        balance.numberOfLines = C.numberOfLines
+        balance.font = .systemFont(ofSize: C.fontSize)
         
         balance.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            balance.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            balance.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 8),
+            balance.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: C.Constraints.yDistanceButtons),
+            balance.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: C.Constraints.xDistanceButtons),
             balance.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5)
         ])
         
         
     }
     
-    func setUpRate() {
-        view.addSubview(rate)
-        
-        rate.text = "1 btc = xxxxxxx.xxx $"
-        rate.numberOfLines = 3
-        rate.font = .systemFont(ofSize: 16)
-        
-        rate.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            rate.centerYAnchor.constraint(equalTo: balance.centerYAnchor),
-            rate.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -8),
-            rate.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5)
-        ])
-    }
     
     func setUpTopUp() {
         view.addSubview(topUp)
@@ -124,10 +100,26 @@ extension FirstScreen {
         topUp.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            topUp.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 8),
-            topUp.topAnchor.constraint(equalTo: balance.bottomAnchor, constant: 8)
+            topUp.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: C.Constraints.xDistanceButtons),
+            topUp.topAnchor.constraint(equalTo: balance.bottomAnchor, constant: C.Constraints.yDistanceButtons)
         ])
         
+    }
+    
+    func setUpRate() {
+        view.addSubview(rate)
+        
+        rate.text = "1 btc = xxxxxxx.xxxxxx $"
+        rate.numberOfLines = C.numberOfLines
+        rate.textColor = .systemGray
+        rate.font = .systemFont(ofSize: C.fontSizeSub)
+        
+        rate.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            rate.centerYAnchor.constraint(equalTo: topUp.centerYAnchor),
+            rate.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -C.Constraints.xDistanceButtons),
+        ])
     }
     
     func setUpAddTransaction() {
@@ -144,7 +136,7 @@ extension FirstScreen {
         
         NSLayoutConstraint.activate([
             addTranscation.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addTranscation.topAnchor.constraint(equalTo: topUp.bottomAnchor, constant: 8)
+            addTranscation.topAnchor.constraint(equalTo: topUp.bottomAnchor, constant: C.Constraints.yDistanceButtons)
         ])
     }
     
@@ -163,7 +155,7 @@ extension FirstScreen {
         historyTable.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            historyTable.topAnchor.constraint(equalTo: addTranscation.bottomAnchor, constant: 8),
+            historyTable.topAnchor.constraint(equalTo: addTranscation.bottomAnchor, constant: C.Constraints.yDistanceButtons),
             historyTable.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             historyTable.leftAnchor.constraint(equalTo: view.leftAnchor),
             historyTable.rightAnchor.constraint(equalTo: view.rightAnchor)
@@ -187,21 +179,13 @@ extension FirstScreen: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            CoreDataService.shared.write {
-                CoreDataService.shared.delete(sortedTransactions[indexPath.row])
-            }
-            historyTable.reloadData()
-        }
-    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pos = scrollView.contentOffset.y
-        if pos > historyTable.contentSize.height - 15 - scrollView.frame.size.height, !isPaginationOn  {
+        if pos > historyTable.contentSize.height - C.Constraints.yDistanceButtons - scrollView.frame.size.height, !isPaginationOn  {
             _transactions.currentPage += 1
             print(_transactions.currentPage)
-            loadMore(itemsPerPage: 20, currentPage: _transactions.currentPage)
+            loadMore(itemsPerPage: C.itemsPerPage, currentPage: _transactions.currentPage)
             isPaginationOn = true
         }
     }
@@ -213,6 +197,7 @@ extension FirstScreen {
     
     @objc func nextScreen() {
         let nextScreen = SecondScreen()
+        nextScreen.delegate = self
         nextScreen.title = "New Transaction"
         navigationController?.pushViewController(nextScreen, animated: true)
         
@@ -233,7 +218,7 @@ extension FirstScreen {
                 CoreDataService.shared.write {
                     
                     //Changing balance amount to the according input
-                    balance.first?.amount = currentBalance.rounded(toPlaces: 3) + amountValue.rounded(toPlaces: 3)
+                    balance.first?.amount = currentBalance.rounded(toPlaces: C.roundDecimal) + amountValue.rounded(toPlaces: C.roundDecimal)
                     
                     //Adding new transaction of a type "top up"
                     _ = CoreDataService.shared.create(Transaction.self) { object in
@@ -247,7 +232,7 @@ extension FirstScreen {
                 guard let balanceAmount = self?.balanceAmount.first?.amount else {return}
                 self?.balance.text = "\(balanceAmount) btc"
                 
-                self?.loadMore(itemsPerPage: 1, currentPage: 1)
+                self?.addTransaction()
                 self?.historyTable.reloadData()
             }
             else {
@@ -271,15 +256,29 @@ extension FirstScreen {
     
     func loadMore(itemsPerPage: Int, currentPage: Int){
         let newData = CoreDataService.shared.fetchBatch(Transaction.self, itemsPerPage: itemsPerPage, currentPage: currentPage)
+        if isPaginationOn {
+            isPaginationOn = false
+        }
         guard !newData.isEmpty else { return }
         sortedTransactions.append(contentsOf: newData)
         sortedTransactions.sort(by: {$0.date! > $1.date!})
         historyTable.reloadData()
         if isPaginationOn {
-            isPaginationOn = false
+            isPaginationOn = true
         }
     }
 }
 
+
+extension FirstScreen: SecondScreenDelegate {
+    func addTransaction() {
+        
+        loadMore(itemsPerPage: 1, currentPage: 1)
+        guard let balanceAmount = balanceAmount.first?.amount else {return}
+        balance.text = "\(balanceAmount.rounded(toPlaces: C.roundDecimal)) btc"
+        
+        historyTable.reloadData()
+    }
+}
 
 

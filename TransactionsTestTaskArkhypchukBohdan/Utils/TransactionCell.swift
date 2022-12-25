@@ -31,15 +31,15 @@ extension TransactionCell {
         contentView.addSubview(amount)
         
         guard let amountBTC = transcation?.amount else {return}
-        amount.text = "\(amountBTC.rounded(toPlaces: 3)) btc"
-        amount.numberOfLines = 3
-        amount.font = .systemFont(ofSize: 16)
+        amount.text = "\(amountBTC.rounded(toPlaces: C.roundDecimal)) btc"
+        amount.numberOfLines = C.numberOfLines
+        amount.font = .systemFont(ofSize: C.fontSizeSub)
         
         amount.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             amount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            amount.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8)
+            amount.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: C.Constraints.xDistanceButtons)
         ])
     }
     
@@ -53,8 +53,8 @@ extension TransactionCell {
         let formattedDate = formatter.string(from: transcationDate)
         
         date.text = formattedDate
-        date.numberOfLines = 3
-        date.font = .systemFont(ofSize: 16)
+        date.numberOfLines = C.numberOfLines
+        date.font = .systemFont(ofSize: C.fontSizeSub)
         
         date.translatesAutoresizingMaskIntoConstraints = false
         
@@ -69,14 +69,14 @@ extension TransactionCell {
         
         guard let categoryText = transcation?.category else {return}
         category.text = "\(categoryText)"
-        category.numberOfLines = 3
-        category.font = .systemFont(ofSize: 16)
+        category.numberOfLines = C.numberOfLines
+        category.font = .systemFont(ofSize: C.fontSizeSub)
         
         category.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             category.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            category.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8)
+            category.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -C.Constraints.xDistanceButtons)
         ])
     }
 }

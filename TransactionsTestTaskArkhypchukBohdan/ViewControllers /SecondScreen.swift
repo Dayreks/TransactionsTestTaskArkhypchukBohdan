@@ -7,12 +7,18 @@
 
 import UIKit
 
+protocol SecondScreenDelegate: AnyObject {
+    func addTransaction()
+}
+
 final class SecondScreen: UIViewController {
     
     private let amountLabel = UILabel()
     private let amountField = UITextField()
     private let categoryPicker = UIPickerView()
     private let addButton = UIButton()
+    
+    weak var delegate: SecondScreenDelegate?
     
     
     let cases = Category.allCases.map { $0.rawValue }
@@ -43,13 +49,13 @@ extension SecondScreen {
         view.addSubview(amountLabel)
         
         amountLabel.text = "Amount"
-        amountLabel.font = .systemFont(ofSize: 16)
+        amountLabel.font = .systemFont(ofSize: C.fontSizeSub)
         
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             amountLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            amountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16)
+            amountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: C.Constraints.yDistanceButtons)
         ])
     }
     
@@ -58,7 +64,7 @@ extension SecondScreen {
         view.addSubview(amountField)
         
         amountField.placeholder = "Enter the amount here"
-        amountField.font = .systemFont(ofSize: 16)
+        amountField.font = .systemFont(ofSize: C.fontSizeSub)
         amountField.textAlignment = .center
         amountField.keyboardType = .decimalPad
         
@@ -68,7 +74,7 @@ extension SecondScreen {
         
         NSLayoutConstraint.activate([
             amountField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            amountField.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 16)
+            amountField.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: C.Constraints.yDistanceButtons)
         ])
     }
     
@@ -83,7 +89,7 @@ extension SecondScreen {
         
         NSLayoutConstraint.activate([
             categoryPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            categoryPicker.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: 8)
+            categoryPicker.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: C.Constraints.yDistanceButtons)
         ])
     }
     
@@ -101,7 +107,7 @@ extension SecondScreen {
         
         NSLayoutConstraint.activate([
             addButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addButton.topAnchor.constraint(equalTo: categoryPicker.bottomAnchor, constant: 8)
+            addButton.topAnchor.constraint(equalTo: categoryPicker.bottomAnchor, constant: C.Constraints.yDistanceButtons)
         ])
     }
     
@@ -125,10 +131,13 @@ extension SecondScreen {
                     }
                     
                     //Deducting the amount of the transaction from the balance accordingly
-                    balance.first?.amount = currentBalance - amount
+                    balance.first?.amount = currentBalance.rounded(toPlaces: C.roundDecimal) - amount.rounded(toPlaces: C.roundDecimal)
                     
                     navigationController?.popToRootViewController(animated: true)
                 }
+                
+                delegate?.addTransaction()
+                
             } else {
                 
                 //If there are not enough money on the balance showing this error
