@@ -43,9 +43,15 @@ final class CoreDataService {
         saveContext()
     }
     
-    func fetch<T: NSManagedObject>(_ type: T.Type, predicate: NSPredicate?) -> [T] {
+    func fetch<T: NSManagedObject>(_ type: T.Type) -> [T] {
         let fetchRequest = NSFetchRequest<T>(entityName: String(describing: T.self))
-        fetchRequest.predicate = predicate
+        
+        
+        if T.self == Transaction.self {
+            let sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
+            fetchRequest.sortDescriptors = [sortDescriptor]
+        }
+        
         return (try? context.fetch(fetchRequest)) ?? []
     }
     
@@ -53,7 +59,19 @@ final class CoreDataService {
         context.delete(object)
     }
     
-    
+    func fetchBatch<T: NSManagedObject>(_ type: T.Type, itemsPerPage: Int, currentPage: Int) -> [T] {
+        
+        let fetchRequest = NSFetchRequest<T>(entityName: String(describing: T.self))
+        
+        if T.self == Transaction.self {
+            let sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
+            fetchRequest.sortDescriptors = [sortDescriptor]
+        }
+        fetchRequest.fetchLimit = itemsPerPage
+        fetchRequest.fetchOffset = (currentPage - 1) * itemsPerPage
+        
+        return (try? context.fetch(fetchRequest)) ?? []
+    }
     
 }
 
@@ -62,9 +80,8 @@ final class CoreDataService {
 class Fetch<T: NSManagedObject> {
     
     var wrappedValue: [T] {
-        CoreDataService.shared.fetch(T.self, predicate: predicate)
+        CoreDataService.shared.fetchBatch(T.self, itemsPerPage: 20, currentPage: currentPage)
     }
     
-    var predicate: NSPredicate?
-    
+    var currentPage: Int = 1
 }

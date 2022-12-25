@@ -6,13 +6,16 @@
 //
 
 import UIKit
+import CoreData
 
 final class FirstScreen: UIViewController {
     
     @Fetch<Transaction> var transactions
     @Fetch<Balance> var balanceAmount
     
-    var sortedTransactions : [Transaction] { transactions.sorted(by: {$0.date! > $1.date!}) }
+    private var sortedTransactions : [Transaction] = []
+    private let itemsPerPage = 20
+    private var isPaginationOn = true
     
     private let balance = UILabel()
     private let rate = UILabel()
@@ -33,13 +36,14 @@ final class FirstScreen: UIViewController {
         guard let balanceAmount = balanceAmount.first?.amount else {return}
         balance.text = "\(balanceAmount.rounded(toPlaces: 3)) btc"
         
+        loadMore(itemsPerPage: 1, currentPage: 1)
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         // Setup of the initial balance in case it was not set already
-        if CoreDataService.shared.fetch(Balance.self, predicate: nil) == [] {
+        if CoreDataService.shared.fetch(Balance.self).isEmpty {
             CoreDataService.shared.write {
                 _ = CoreDataService.shared.create(Balance.self) { object in
                     object.amount = 0.0
@@ -57,7 +61,11 @@ final class FirstScreen: UIViewController {
         setUpTopUp()
         setUpAddTransaction()
         setUpHistoryTable()
+        
+        
+        loadMore(itemsPerPage: 20, currentPage: _transactions.currentPage)
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -116,7 +124,7 @@ extension FirstScreen {
         topUp.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            topUp.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
+            topUp.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 8),
             topUp.topAnchor.constraint(equalTo: balance.bottomAnchor, constant: 8)
         ])
         
@@ -187,6 +195,16 @@ extension FirstScreen: UITableViewDataSource, UITableViewDelegate {
             historyTable.reloadData()
         }
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pos = scrollView.contentOffset.y
+        if pos > historyTable.contentSize.height - 15 - scrollView.frame.size.height, !isPaginationOn  {
+            _transactions.currentPage += 1
+            print(_transactions.currentPage)
+            loadMore(itemsPerPage: 20, currentPage: _transactions.currentPage)
+            isPaginationOn = true
+        }
+    }
 }
 
 
@@ -206,7 +224,7 @@ extension FirstScreen {
         topUpAlert.addTextField()
         topUpAlert.textFields?.first?.keyboardType = .decimalPad
         
-        let balance = CoreDataService.shared.fetch(Balance.self, predicate: nil)
+        let balance = CoreDataService.shared.fetch(Balance.self)
         guard let currentBalance = balance.first?.amount else {return}
         
         topUpAlert.addAction(.init(title: "Submit", style: .default) { [weak self] _ in
@@ -222,12 +240,14 @@ extension FirstScreen {
                         object.amount = amountValue
                         object.category = "top up"
                         object.date = .init()
+                        
                     }
                 }
                 
                 guard let balanceAmount = self?.balanceAmount.first?.amount else {return}
                 self?.balance.text = "\(balanceAmount) btc"
                 
+                self?.loadMore(itemsPerPage: 1, currentPage: 1)
                 self?.historyTable.reloadData()
             }
             else {
@@ -238,13 +258,28 @@ extension FirstScreen {
                     wrongFormat.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self?.dismissOnTapOutside)))
                 })
             }
+            
         })
         
         present(topUpAlert, animated: false)
+        
     }
     
     @objc func dismissOnTapOutside(){
         self.dismiss(animated: true, completion: nil)
     }
+    
+    func loadMore(itemsPerPage: Int, currentPage: Int){
+        let newData = CoreDataService.shared.fetchBatch(Transaction.self, itemsPerPage: itemsPerPage, currentPage: currentPage)
+        guard !newData.isEmpty else { return }
+        sortedTransactions.append(contentsOf: newData)
+        sortedTransactions.sort(by: {$0.date! > $1.date!})
+        historyTable.reloadData()
+        if isPaginationOn {
+            isPaginationOn = false
+        }
+    }
 }
+
+
 

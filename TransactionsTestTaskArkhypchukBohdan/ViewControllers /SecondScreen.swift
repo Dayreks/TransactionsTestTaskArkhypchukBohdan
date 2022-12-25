@@ -49,7 +49,7 @@ extension SecondScreen {
         
         NSLayoutConstraint.activate([
             amountLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            amountLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 160)
+            amountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16)
         ])
     }
     
@@ -108,7 +108,7 @@ extension SecondScreen {
     
     @objc func addTransaction() {
         
-        let balance = CoreDataService.shared.fetch(Balance.self, predicate: nil)
+        let balance = CoreDataService.shared.fetch(Balance.self)
         guard let currentBalance = balance.first?.amount else {return}
         
         if let amount = self.amount {
@@ -127,6 +127,7 @@ extension SecondScreen {
                     //Deducting the amount of the transaction from the balance accordingly
                     balance.first?.amount = currentBalance - amount
                     
+                    navigationController?.popToRootViewController(animated: true)
                 }
             } else {
                 
@@ -147,6 +148,8 @@ extension SecondScreen {
                 wrongFormat.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissOnTapOutside)))
             })
         }
+        
+        
     }
     
     @objc func dismissOnTapOutside(){
