@@ -7,15 +7,12 @@
 
 import Foundation
 
-
 protocol SecondScreenDelegate: AnyObject {
     func addTransaction()
 }
 
-
 extension Double {
-    
-    func rounded(toPlaces places:Int) -> Double {
+    func rounded(toPlaces places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return (self * divisor).rounded() / divisor
     }
@@ -29,29 +26,22 @@ enum Category: String, CaseIterable {
     case `other`
 }
 
-
 enum NetworkError: Error {
-    
     case badHostString
     case bad
-    
 }
 
 
 enum C {
-    
-    
     static let numberOfLines = 3
     static let roundDecimal = 6
     static let fontSizeSub: CGFloat = 16
     static let fontSize: CGFloat = 24
     static let itemsPerPage = 20
-    
     enum Constraints {
         static let xDistanceButtons: CGFloat = 8
         static let yDistanceButtons: CGFloat = 16
     }
-    
     enum Strings {
         static let topUp = "top up"
         static let url = "https://api.coindesk.com/v1/bpi/currentprice.json"
@@ -63,7 +53,6 @@ enum C {
         static let firstScreenTitle = "Test Task"
         static let secondScreenTitle = "New Transaction"
     }
-    
     enum ViewNames {
         static let topUp = "Top Up"
         static let addTransaction = "Add Transaction"
@@ -71,7 +60,4 @@ enum C {
         static let amount = "Amount"
     }
 }
-
-
-
 

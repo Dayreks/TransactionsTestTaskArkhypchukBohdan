@@ -8,17 +8,13 @@
 import UIKit
 
 final class TransactionCell: UITableViewCell {
-    
     var transcation: Transaction?
-    
     private let view = UIView()
-    
     private let amount = UILabel()
     private let date = UILabel()
     private let category = UILabel()
-    
-    //Configuration of the cell's views
-    func configure() {
+
+    func configure() { // Configuration of the cell's views
         setUpAmount()
         setUpDate()
         setUpCategory()
@@ -26,17 +22,13 @@ final class TransactionCell: UITableViewCell {
 }
 
 extension TransactionCell {
-    
     func setUpAmount() {
         contentView.addSubview(amount)
-        
         guard let amountBTC = transcation?.amount else {return}
         amount.text = "\(amountBTC.rounded(toPlaces: C.roundDecimal)) btc"
         amount.numberOfLines = C.numberOfLines
         amount.font = .systemFont(ofSize: C.fontSizeSub)
-        
         amount.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             amount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             amount.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: C.Constraints.xDistanceButtons)
@@ -45,19 +37,14 @@ extension TransactionCell {
     
     func setUpDate() {
         contentView.addSubview(date)
-        
-       
         let formatter = DateFormatter()
         formatter.dateFormat = C.Strings.dateFormat
         guard let transcationDate = transcation?.date else {return}
         let formattedDate = formatter.string(from: transcationDate)
-        
         date.text = formattedDate
         date.numberOfLines = C.numberOfLines
         date.font = .systemFont(ofSize: C.fontSizeSub)
-        
         date.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             date.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             date.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
@@ -66,14 +53,11 @@ extension TransactionCell {
     
     func setUpCategory() {
         contentView.addSubview(category)
-        
         guard let categoryText = transcation?.category else {return}
         category.text = "\(categoryText)"
         category.numberOfLines = C.numberOfLines
         category.font = .systemFont(ofSize: C.fontSizeSub)
-        
         category.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             category.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             category.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -C.Constraints.xDistanceButtons)

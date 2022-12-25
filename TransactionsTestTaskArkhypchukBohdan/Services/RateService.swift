@@ -7,10 +7,8 @@
 
 import Foundation
 
-
 class RateService {
-    
-    private let host : URL
+    private let host: URL
     private var session = URLSession.shared
     
     init(url: String) throws {
@@ -18,7 +16,6 @@ class RateService {
             self.host = url
             return
         }
-        
         throw NetworkError.badHostString
     }
     
@@ -29,21 +26,7 @@ class RateService {
     }
 }
 
-
 struct RateData: Codable {
-    
-    struct BPI: Codable {
-        var usd: USD = USD()
-        
-        enum CodingKeys: String, CodingKey {
-            case usd = "USD"
-        }
-    }
-
-    struct USD: Codable {
-        var rate: String = ""
-    }
-    
     var bpi: BPI = BPI()
 
     func getRate() async -> String? {
@@ -51,9 +34,7 @@ struct RateData: Codable {
             let rateService = try RateService(url: C.Strings.url)
             let data = try await rateService.perform()
             let results = try JSONDecoder().decode(RateData.self, from: data)
-            
             return results.bpi.usd.rate
-            
         } catch {
             print(error)
         }
@@ -61,3 +42,13 @@ struct RateData: Codable {
     }
 }
 
+struct BPI: Codable {
+    var usd: USD = USD()
+    enum CodingKeys: String, CodingKey {
+        case usd = "USD"
+    }
+}
+
+struct USD: Codable {
+    var rate: String = ""
+}
