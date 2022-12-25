@@ -80,7 +80,7 @@ final class CoreDataService {
 class Fetch<T: NSManagedObject> {
     
     var wrappedValue: [T] {
-        CoreDataService.shared.fetchBatch(T.self, itemsPerPage: 20, currentPage: currentPage)
+        CoreDataService.shared.fetchBatch(T.self, itemsPerPage: C.itemsPerPage, currentPage: currentPage)
     }
     
     var currentPage: Int = 1
